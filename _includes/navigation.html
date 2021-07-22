@@ -1,0 +1,9 @@
+
+<nav>
+  <label for="lightswitch" id="lightswitch-label">☀</label>
+    {% for item in site.data.navigation %}
+    ·
+      <a href="{{ item.link | relative_url }}" class="current">{{ item.name | upcase }}</a>
+    {% endfor %}
+    ·
+</nav>

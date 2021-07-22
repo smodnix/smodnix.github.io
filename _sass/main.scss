@@ -1,0 +1,88 @@
+.current {
+    font-size: 20px;
+    text-decoration: none;
+    color: #587e72;
+    background-image: linear-gradient(#587e72, #587e72);
+    background-position: 0% 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 2px;
+    transition: background-size 0.3s;
+}
+
+#footer {
+    margin-top: 100px;
+}
+
+.info {
+    font-size: 22px;
+}
+
+header {
+    padding-top: 20px;
+}
+
+.highlight {
+  border: 1px solid #e8e8e8;
+  border-radius: 3px;
+}
+
+.page-tags a:hover, dl a:hover, figcaption a:hover, li a:hover, p a:hover, table a:hover {
+  opacity: .9;
+                filter: drop-shadow(1px 1px 1px var(--back-white));
+                background-image: linear-gradient(var(--text-dark),var(--text-dark));
+                background-repeat: repeat-x;
+                background-image: url("data:image/svg+xml;charset=utf8,%3Csvg id='squiggle-link' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:ev='http://www.w3.org/2001/xml-events' viewBox='0 0 20 4'%3E%3Cstyle type='text/css'%3E.squiggle{animation:shift .3s linear infinite;}@keyframes shift {from {transform:translateX(0);}to {transform:translateX(-20px);}}%3C/style%3E%3Cpath fill='none' stroke='%23000000' stroke-width='2' class='squiggle' d='M0,3.5 c 5,0,5,-3,10,-3 s 5,3,10,3 c 5,0,5,-3,10,-3 s 5,3,10,3'/%3E%3C/svg%3E")!important;
+                background-position: 0 100%;
+                background-size: .8em auto;
+                text-decoration: none
+}
+/*
+nav a {
+    text-decoration: none;
+    color: #587e72;
+    background-image: linear-gradient(#587e72, #587e72);
+    background-position: 0% 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 2px;
+    transition: background-size 0.3s;
+}
+*/
+
+pre, pre code, p pre code {
+    overflow-x: auto;
+}
+
+blockquote {
+    font-style: italic;
+}
+
+code.language-ruby {
+    width: auto;
+}
+
+.highlight pre {
+    white-space: pre-wrap;
+}
+
+/*.sidenote-number:hover, .sidenote:hover {
+    color: #a00000;
+}
+*/
+
+table {
+    width: auto;
+    border-spacing: 0px;
+    border-top: 2px solid #333333;
+    border-bottom: 2px solid #333333;
+}
+
+th, td {
+    font-size: 1.2rem;
+    line-height: 1.71428571;
+}
+
+th, th {
+    border-bottom: 1px solid #333333;
+    padding: 0.65ex 0.5em 0.4ex 0.5em;
+    font-weight: normal;
+}

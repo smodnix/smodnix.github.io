@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link type="application/atom+xml" rel="alternate" href="smodnix.github.io/feed.xml" title="smodnix&apos;s blog" />
+    <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Secure Coding in Ruby on Rails | smodnix’s blog</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Secure Coding in Ruby on Rails" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Technical articles about web application security." />
+<meta property="og:description" content="Technical articles about web application security." />
+<link rel="canonical" href="smodnix.github.io/secure-coding-in-ruby-on-rails" />
+<meta property="og:url" content="smodnix.github.io/secure-coding-in-ruby-on-rails" />
+<meta property="og:site_name" content="smodnix’s blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-07-10T00:00:00+04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Secure Coding in Ruby on Rails" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","description":"Technical articles about web application security.","mainEntityOfPage":{"@type":"WebPage","@id":"smodnix.github.io/secure-coding-in-ruby-on-rails"},"url":"smodnix.github.io/secure-coding-in-ruby-on-rails","headline":"Secure Coding in Ruby on Rails","dateModified":"2021-07-10T00:00:00+04:00","datePublished":"2021-07-10T00:00:00+04:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+  <body>
+    <input type="checkbox" id="lightswitch">
+    <div id="body">
+      <div id="container">
+    <header>
+      
+<nav>
+  <label for="lightswitch" id="lightswitch-label">☀</label>
+    
+    ·
+      <a href="/" class="current">HOME</a>
+    
+    ·
+      <a href="/about" class="current">ABOUT</a>
+    
+    ·
+      <a href="/files/resume.pdf" class="current">RÉSUMÉ</a>
+    
+    ·
+      <a href="/posts" class="current">POSTS</a>
+    
+    ·
+</nav>
+      <hr>
+    </header>
+    <section>
+      <h1>Secure Coding in Ruby on Rails</h1>
+Posted on <span class="intro">Jul 10th, 2021</span>
+
+<h3 id="secure-coding-in-ruby-on-rails">Secure coding in Ruby on Rails</h3>
+
+<p>**My purpose of writing this - I want to show that how is secure rails application developing and how to secure it by design. I explain that **</p>
+
+<p>We have to see clearly what things are insecure by default that is why I am going to build a ruby blog crud project from scratch. In this time period we’ll doing some grey box testing - like we are looking at codebase vulnerabilites from white box aspects then doing black box testing to know which components are insecure by default.</p>
+
+<p>Before starting into it: I don’t diving into the Ruby on Rails environment setup. I will focus  development cycle and security aspects much more than it. Then let’s begin!</p>
+
+<h3 id="building-a-rails-project">Building a rails project</h3>
+
+<p>Which features we are develop project:</p>
+<ul>
+  <li>Controllers</li>
+  <li>Routes</li>
+  <li>Views</li>
+  <li>Input Sanitization - XSS, SQL/Command Injections,</li>
+  <li>Login, Registrations</li>
+  <li>Password</li>
+</ul>
+
+<p>First, I build up an application project with rails command <code class="language-plaintext highlighter-rouge">rails new secure-blog</code>.
+Rails applications are structured around the model-view-controller (MVC) software engineering pattern. The MVC pattern is designed to separate an application’s data from a user’s interaction with it.</p>
+
+<ul>
+  <li>
+    <p><strong>Models</strong>  - The model represents your application’s data and the rules for manipulating that data. The application’s data is sometimes referred to as the application’s state. The rules for manipulating this data are also known as business logic. All changes to your application’s state must pass through the model layer.
+  Rails models contain code for data validation and associations between models. Most of the code you write will be inside of a Rails model, unless it is directly involved with the user’s view of the data.</p>
+  </li>
+  <li>
+    <p><strong>Views</strong> - The view is the user interface for your application. Because we are building web applications, the view will consist mainly of HTML. Rails uses a template system called Embedded Ruby (ERB) by default.</p>
+  </li>
+  <li>
+    <p><strong>Controllers</strong> - The controller is like the glue that holds together the model and the view. The controller is responsible for accepting a request from the user, gathering the necessary data from the model, and rendering the correct view. This sounds like a lot of work, but thanks to the conventions used in Rails applications, the process happens almost automatically.</p>
+  </li>
+</ul>
+
+<p>I am using a scaffold feature for generating post with <code class="language-plaintext highlighter-rouge">rails generate scaffold Post title:string body:text</code> command. This have generated a database migration and we use <code class="language-plaintext highlighter-rouge">rake db:migrate</code> command to migrate this database.</p>
+
+<h3 id="standing-on-the-shoulders-of-giants">Standing on the shoulders of giants</h3>
+<p>The last words….</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1">## Liquid tag 'epigraph' used to add an epigraph</span>
+<span class="c1">## in the main text area of the layout</span>
+<span class="c1">## Usage &lt;div class='epigraph'&gt;&lt;blockquote&gt;&lt;p&gt;text-body-of-epigraph&lt;/p&gt;&lt;footer&gt;author-of-epigraph, &lt;cite&gt;citation-of-epigraph&lt;/cite&gt;&lt;/footer&gt;&lt;/blockquote&gt;&lt;/div&gt;</span>
+<span class="c1">#</span>
+<span class="k">module</span> <span class="nn">Jekyll</span>
+    <span class="k">class</span> <span class="nc">RenderEpigraphTag</span> <span class="o">&lt;</span> <span class="no">Liquid</span><span class="o">::</span><span class="no">Tag</span>
+  
+        <span class="nb">require</span> <span class="s2">"shellwords"</span>
+  
+      <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">tag_name</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
+        <span class="k">super</span>
+        <span class="vi">@text</span> <span class="o">=</span> <span class="n">text</span><span class="p">.</span><span class="nf">shellsplit</span>
+      <span class="k">end</span>
+  
+      <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+          <span class="s2">"&lt;div class='epigraph'&gt;&lt;blockquote&gt;&lt;p&gt;</span><span class="si">#{</span><span class="vi">@text</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&lt;/p&gt;"</span><span class="o">+</span>
+          <span class="s2">"&lt;footer&gt;</span><span class="si">#{</span><span class="vi">@text</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, "</span><span class="o">+</span><span class="s2">"&lt;cite&gt;</span><span class="si">#{</span><span class="vi">@text</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&lt;/cite&gt;&lt;/footer&gt;&lt;/blockquote&gt;&lt;/div&gt;"</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+  <span class="no">Liquid</span><span class="o">::</span><span class="no">Template</span><span class="p">.</span><span class="nf">register_tag</span><span class="p">(</span><span class="s1">'epigraph'</span><span class="p">,</span> <span class="no">Jekyll</span><span class="o">::</span><span class="no">RenderEpigraphTag</span><span class="p">)</span></code></pre></figure>
+
+
+
+    </section>
+
+      
+<footer id="footer">
+    <hr>
+    <i>Site proudly generated by
+    <a href="https://jekyllrb.com/">Jekyll</a> & hosted on <a href="https://pages.github.com/">Github</a></i> | <a href="/feed.xml">RSS</a> | <a href="https://html5.validator.nu/?doc=https://smodnix.github.io/"><b>This page is valid HTML</b></a>
+</footer>
+      </div>
+  </div>
+  <!-- Privacy-aware analytics by https://www.goatcounter.com/ -->
+  <script data-goatcounter="https://smod.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  
+  <!-- Colour theme switcher -->
+  <script>
+    const themeSwitch = document.querySelector('#lightswitch');
+    themeSwitch.checked = localStorage.getItem('switchedTheme') === 'true';
+
+    themeSwitch.addEventListener('change', function (e) {
+        if(e.currentTarget.checked === true) {
+            // Add item to localstorage
+            localStorage.setItem('switchedTheme', 'true');
+        } else {
+            // Remove item if theme is switched back to normal
+            localStorage.removeItem('switchedTheme');
+        }
+    });
+  </script>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+---
+layout: default
+title: About
+---
+
+# About me
+
+I'm Ilkin Qasimov, also known as smodnix. I am a guy interested in web application security by heart with a passion for web development and mainly write *JavaScript* <br> and *Ruby on Rails*.
+
+I also love labs/ctfs, so here are some I have completed:
+
+- SecureFlag
+- HackTheBox
+- TryHackMe
+
+If you are interested in working with me, here is my [Résumé]({{ "files/resume.pdf" | relative_url }}){:target="_blank"}{:rel="noopener noreferrer"}.
+
+## Contact / Links
+
+- Email: smodnix [a.t] pm [d.o.t] me
+- PGP: [A7BC3448]({{ "files/pubkey.txt" | relative_url }})
+- Github: [smodnix](https://github.com/smodnix){:target="_blank"}{:rel="noopener noreferrer"}
+- Keybase: [smodnix](https://keybase.io/smodnix){:target="_blank"}{:rel="noopener noreferrer"}
+- Twitter: [smodnix](https://twitter.com/smodnix){:target="_blank"}{:rel="noopener noreferrer"}
