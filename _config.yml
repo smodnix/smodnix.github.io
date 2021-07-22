@@ -22,7 +22,7 @@ title: smodnix's blog
 email: 
 description: >- # this means to ignore newlines until "baseurl:"
   Technical articles about web application security.
-#baseurl: "/blog-3" # the subpath of your site, e.g. /blog
+baseurl: "" # the subpath of your site, e.g. /blog
 url: "smodnix.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: smodnix
 github_username:  smodnix
