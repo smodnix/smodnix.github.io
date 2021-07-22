@@ -10,7 +10,6 @@ I'm Ilkin Qasimov, also known as smodnix. I am a guy interested in web applicati
 I also love labs/ctfs, so here are some I have completed:
 
 - SecureFlag
-- HackTheBox
 - TryHackMe
 
 If you are interested in working with me, here is my [Résumé]({{ "files/resume.pdf" | relative_url }}){:target="_blank"}{:rel="noopener noreferrer"}.
