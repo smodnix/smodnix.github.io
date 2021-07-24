@@ -14,7 +14,7 @@ Generally injection vulnerabilities occur when untrusted data is placed into dat
 
 OS Command Injection {% sidenote 1 '[CWE-78: OS Command Injection](https://cwe.mitre.org/data/definitions/78.html){:target="_blank"}{:rel="noopener noreferrer"}' %} is a type of injection vulnerability wherein commands injected by an attacker are executed as system commands on the host operating system.
 
-Not to be confused with *Code Injection* {% sidenote 1 'Code Injection is the general term for attack types which consist of injecting code that is then interpreted/executed by the application.' %}, OS Command Injection extends the preset functionality of the application to execute system commands, whereas Code Injection attacks allow the attacker to add their own code to be executed by the application. In certain circumstances, Code Injection could be promoted to OS Command Injection by using the facilities provided by the language.
+Not to be confused with *Code Injection* {% sidenote 2 'Code Injection is the general term for attack types which consist of injecting code that is then interpreted/executed by the application.' %}, OS Command Injection extends the preset functionality of the application to execute system commands, whereas Code Injection attacks allow the attacker to add their own code to be executed by the application. In certain circumstances, Code Injection could be promoted to OS Command Injection by using the facilities provided by the language.
 
 The vulnerable example for this problem has always been API calls that directly call
 the system command interpreter without any validation. 
@@ -82,7 +82,7 @@ Some methods only accept the command argument as a single string and are prone t
 
 {% newthought 'SQL Injection' %}
 
-SQL injection {% sidenote 1 '[SQL Injection](http://guides.rubyonrails.org/security.html#sql-injection){:target="_blank"}{:rel="noopener noreferrer"}' %} is a common attack that uses malicious SQL code for backend database manipulation to access information that was not intended to be displayed or changed.
+SQL injection {% sidenote 3 '[SQL Injection](http://guides.rubyonrails.org/security.html#sql-injection){:target="_blank"}{:rel="noopener noreferrer"}' %} is a common attack that uses malicious SQL code for backend database manipulation to access information that was not intended to be displayed or changed.
 
 {% maincolumn 'https://imgs.xkcd.com/comics/exploits_of_a_mom.png' 'From [xkcd](https://xkcd.com/327/){:target="_blank"}{:rel="noopener noreferrer"}, <em>Exploits of a Mom</em>' %}
 
@@ -92,12 +92,12 @@ Applications are vulnerable to attacks when user-supplied data is not validated,
 
 ### Remediation
 
-To avoid SQL injection vulnerabilities, developers need to use *parameterized queries* {% sidenote 1 '[Query Parameterization for Ruby on Rails.](https://cheatsheetseries.owasp.org/cheatsheets/Query_Parameterization_Cheat_Sheet.html#using-ruby-with-activerecord){:target="_blank"}{:rel="noopener noreferrer"}' %}, specifying placeholders for parameters so that they are not considered as a part of the SQL command; rather, as solely data by the database.
+To avoid SQL injection vulnerabilities, developers need to use *parameterized queries* {% sidenote 4 '[Query Parameterization for Ruby on Rails.](https://cheatsheetseries.owasp.org/cheatsheets/Query_Parameterization_Cheat_Sheet.html#using-ruby-with-activerecord){:target="_blank"}{:rel="noopener noreferrer"}' %}, specifying placeholders for parameters so that they are not considered as a part of the SQL command; rather, as solely data by the database.
 
 When working with legacy systems, developers need to escape inputs before adding them to the query. Object relational mappers (ORMs) make this easier for the developer; however, they are not a panacea, with the underlying mitigations still entirely relevant: 
 **untrusted data needs to be validated, query concatenation should be avoided unless absolutely necessary, and minimizing unnecessary SQL account privileges is crucial**.
 
-Ruby on Rails provides an interface called _Active Record_ {% sidenote 1 '[Active Record Basics.](https://guides.rubyonrails.org/active_record_basics.html){:target="_blank"}{:rel="noopener noreferrer"}' %}, an object-relational mapping (ORM) abstraction that facilitates database access. The following snippet of code displays the User model performing email and password validation, as well as conducting some authenticated actions:
+Ruby on Rails provides an interface called _Active Record_ {% sidenote 5 '[Active Record Basics.](https://guides.rubyonrails.org/active_record_basics.html){:target="_blank"}{:rel="noopener noreferrer"}' %}, an object-relational mapping (ORM) abstraction that facilitates database access. The following snippet of code displays the User model performing email and password validation, as well as conducting some authenticated actions:
 
 #### Vulnerable example
 {% highlight ruby %}
@@ -132,7 +132,7 @@ You can also pass a hash for the same result:
 User.where(email: address, password: password).exists?
 {% endhighlight %}
 
-The array or hash form is only available in model instances. You can try `sanitize_sql()` {% sidenote 1 '[ActiveRecord::Sanitization methods](https://api.rubyonrails.org/classes/ActiveRecord/Sanitization/ClassMethods.html#method-i-sanitize_conditions){:target="_blank"}{:rel="noopener noreferrer"}' %} elsewhere.
+The array or hash form is only available in model instances. You can try `sanitize_sql()` {% sidenote 6 '[ActiveRecord::Sanitization methods](https://api.rubyonrails.org/classes/ActiveRecord/Sanitization/ClassMethods.html#method-i-sanitize_conditions){:target="_blank"}{:rel="noopener noreferrer"}' %} elsewhere.
 
 ----
 
@@ -146,7 +146,7 @@ That is exactly the same case for this topic.
 
 {% newthought 'Broken Authorization' %}
 
-Broken Authorization {% sidenote 1 '[OWASP Broken Authorization](https://owasp.org/www-project-top-ten/2017/A2_2017-Broken_Authentication){:target="_blank"}{:rel="noopener noreferrer"}' %} (also known as _Broken Access Control_ or _Privilege Escalation_) is the hypernym for a range of flaws that arise due to the ineffective implementation of authorization checks used to designate user access privileges.
+Broken Authorization {% sidenote 7 '[OWASP Broken Authorization](https://owasp.org/www-project-top-ten/2017/A2_2017-Broken_Authentication){:target="_blank"}{:rel="noopener noreferrer"}' %} (also known as _Broken Access Control_ or _Privilege Escalation_) is the hypernym for a range of flaws that arise due to the ineffective implementation of authorization checks used to designate user access privileges.
 
 Different users are permitted or denied access to various content and functions in adequately designed and implemented authorization frameworks depending on the user's designated role and corresponding privileges. 
 
@@ -172,7 +172,7 @@ The application uses unverified data in a method call downstream to retrieve acc
 
 `http://example.com/account?accountId=7800002`
 
-Insecure Direct Object References {% sidenote 1 '[Insecure Direct Object References](https://guides.rubyonrails.org/security.html#privilege-escalation){:target="_blank"}{:rel="noopener noreferrer"}' %}, or IDOR, is a related scenario involving user-supplied input being utilized to access objects directly.
+Insecure Direct Object References {% sidenote 8 '[Insecure Direct Object References](https://guides.rubyonrails.org/security.html#privilege-escalation){:target="_blank"}{:rel="noopener noreferrer"}' %}, or IDOR, is a related scenario involving user-supplied input being utilized to access objects directly.
 
 **Vertical Authorization Control Bypass**
 
@@ -281,7 +281,7 @@ Filters are inherited, so if you set a filter on `ApplicationController`, it wil
 
 {% newthought 'Cross-Site Scripting' %}
 
-Cross-Site Scripting (otherwise known as XSS) is a vulnerability that allows a malicious actor to manipulate a legitimate user's interactions with a vulnerable web application. Attackers exploit this to bypass the _same origin policy_ {% sidenote 1 '[Same-origin policy](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy){:target="_blank"}{:rel="noopener noreferrer"}' %}, often allowing them to perform any actions that the target user would normally perform, including gaining access to their data. In cases where the victim user has privileged application access, the attacker may use XSS to gain control of the application.
+Cross-Site Scripting (otherwise known as XSS) is a vulnerability that allows a malicious actor to manipulate a legitimate user's interactions with a vulnerable web application. Attackers exploit this to bypass the _same origin policy_ {% sidenote 9 '[Same-origin policy](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy){:target="_blank"}{:rel="noopener noreferrer"}' %}, often allowing them to perform any actions that the target user would normally perform, including gaining access to their data. In cases where the victim user has privileged application access, the attacker may use XSS to gain control of the application.
 
 XSS attacks can result in the disclosure of the user's session cookie, allowing an attacker to hijack the user's session and take over the account. Even though `HTTPOnly` is used to protect cookies, an attacker can still execute actions on behalf of the user in the context of the affected website.
 
@@ -305,7 +305,7 @@ DOM-based XSS vulnerabilities usually occur when the JavaScript in a page takes 
 
 XSS attacks can be mitigated by performing appropriate server-side validation and escaping. Remediation relies on performing Output Encoding (e.g. using an escape syntax) for the type of HTML context where untrusted data is reflected into.
 
-**Input Validation** {% sidenote 1 '[Input Validation](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html){:target="_blank"}{:rel="noopener noreferrer"}' %}
+**Input Validation** {% sidenote 10 '[Input Validation](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html){:target="_blank"}{:rel="noopener noreferrer"}' %}
 
 -   Exact Match: Only accept values from a finite list of known values.
 -   Allow list: If a list of all the possible values can't be created, accept only known good data and reject all unexpected input.
@@ -313,14 +313,14 @@ XSS attacks can be mitigated by performing appropriate server-side validation an
 
 **Output Encoding**
 
-_Output Encoding_ {% sidenote 1 '[Output encoding](https://owasp.org/www-project-proactive-controls/v3/en/c4-encode-escape-data){:target="_blank"}{:rel="noopener noreferrer"}' %} is used to convert untrusted input into a safe form where the input is displayed as **data** to the user without executing as **code** in the browser. Output Encoding is performed when the data leaves the application to a downstream component. The table below lists the possible downstream contexts where the untrusted input could be used:
+_Output Encoding_ {% sidenote 11 '[Output encoding](https://owasp.org/www-project-proactive-controls/v3/en/c4-encode-escape-data){:target="_blank"}{:rel="noopener noreferrer"}' %} is used to convert untrusted input into a safe form where the input is displayed as **data** to the user without executing as **code** in the browser. Output Encoding is performed when the data leaves the application to a downstream component. The table below lists the possible downstream contexts where the untrusted input could be used:
 
 
 ### Defense in Depth
 
 **Content Security Policy (CSP)**
 
-_The Content Security Policy (CSP)_ {% sidenote 1 '[Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP){:target="_blank"}{:rel="noopener noreferrer"}' %} is a browser mechanism that enables the creation of source allow lists for client-side resources of web applications e.g. JavaScript, CSS, images etc. CSP via a special HTTP header instructs the browser to only execute or render resources from those sources.
+_The Content Security Policy (CSP)_ {% sidenote 12 '[Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP){:target="_blank"}{:rel="noopener noreferrer"}' %} is a browser mechanism that enables the creation of source allow lists for client-side resources of web applications e.g. JavaScript, CSS, images etc. CSP via a special HTTP header instructs the browser to only execute or render resources from those sources.
 
 For example:
 
