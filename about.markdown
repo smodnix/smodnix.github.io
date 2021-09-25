@@ -5,12 +5,13 @@ title: About
 
 # About me
 
-I'm Ilkin Qasimov, also known as smodnix. I am a guy interested in web application security by heart with a passion for web development and mainly write *JavaScript* <br> and *Ruby on Rails*.
+I'm Ilkin Qasimov, also known as smodnix. I am a guy interested in web application security by heart with a passion for web development.
 
-I also love labs/ctfs, so here are some I have completed:
+I also love labs/wargames, so here are some I have completed:
 
 - SecureFlag
 - TryHackMe
+- IO Netgarage (02-10)
 
 If you are interested in working with me, here is my [Résumé]({{ "files/resume.pdf" | relative_url }}){:target="_blank"}{:rel="noopener noreferrer"}.
 
