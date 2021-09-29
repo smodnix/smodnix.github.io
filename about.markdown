@@ -17,7 +17,7 @@ If you are interested in working with me, here is my [Résumé]({{ "files/resume
 
 ## Contact / Links
 
-- Email: smodnix [a.t] pm [d.o.t] me
+- Email: `smodnix`[a.t]`pm`[d.o.t]`me`
 - PGP: [A7BC3448]({{ "files/pubkey.txt" | relative_url }})
 - Github: [smodnix](https://github.com/smodnix){:target="_blank"}{:rel="noopener noreferrer"}
 - Keybase: [smodnix](https://keybase.io/smodnix){:target="_blank"}{:rel="noopener noreferrer"}
