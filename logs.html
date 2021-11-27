@@ -1,0 +1,14 @@
+---
+layout: default
+title: Logs
+---
+<h1>Life Logs</h1>
+<section>
+<ul>
+  {% for log in site.logs %}
+    <li>
+      <a href="{{ log.url | relative_url }}">{{ log.title }}</a> - {{ log.date | date_to_string: "ordinal", "US" }}
+    </li>
+  {% endfor %}
+</ul>
+</section>

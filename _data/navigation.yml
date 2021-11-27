@@ -4,5 +4,7 @@
   link: /about
 - name: Résumé
   link: /files/resume.pdf
+- name: Logs 
+  link: /logs
 - name: Posts 
   link: /posts
