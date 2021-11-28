@@ -10,4 +10,4 @@ I believe, I have to write logs in more natural way rather than the usual techni
 
 Nowadays experiencing myself socially weak. I have difficulty expressing my thoughts clearly. 
 
-{% epigraph “No tree, it is said, can grow to heaven unless its roots reach down to hell.”, Carl Jung %}
+{% epigraph 'No tree, it is said, can grow to heaven unless its roots reach down to hell.', 'Carl Jung' %}
