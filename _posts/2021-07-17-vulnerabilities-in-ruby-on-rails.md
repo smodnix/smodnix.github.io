@@ -84,7 +84,7 @@ Some methods only accept the command argument as a single string and are prone t
 
 SQL injection {% sidenote 3 '[SQL Injection](http://guides.rubyonrails.org/security.html#sql-injection){:target="_blank"}{:rel="noopener noreferrer"}' %} is a common attack that uses malicious SQL code for backend database manipulation to access information that was not intended to be displayed or changed.
 
-{% maincolumn 'https://imgs.xkcd.com/comics/exploits_of_a_mom.png' 'From [xkcd](https://xkcd.com/327/){:target="_blank"}{:rel="noopener noreferrer"}, <em>Exploits of a Mom</em>' %}
+{% maincolumn 'https://imgs.xkcd.com/comics/exploits_of_a_mom.png' '<em>Exploits of a Mom</em>, from [xkcd](https://xkcd.com/327/){:target="_blank"}{:rel="noopener noreferrer"}' %}
 
 An attacker can use SQL Injection to manipulate an SQL query via the input data from the client to the application, thus forcing the SQL server to execute an unintended operation constructed using untrusted input.
 
