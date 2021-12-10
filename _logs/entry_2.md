@@ -33,7 +33,7 @@ The underlying truth behind all of this is:
 1. Upgrading to [new version](https://logging.apache.org/log4j/2.x/download.html){:target='_blank'}{:rel='noopener noreferrer'}.
 2. If you can't upgrade, set the property:
 
-% highlight %}
+{% highlight %}
 log4j2.formatMsgNoLookups=true
 {% endhighlight %}
 
