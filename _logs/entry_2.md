@@ -33,12 +33,12 @@ The underlying truth behind all of this is:
 1. Upgrading to [new version](https://logging.apache.org/log4j/2.x/download.html){:target='_blank'}{:rel='noopener noreferrer'}.
 2. If you can't upgrade, set the property:
 
-{% highlight %}
+{% highlight bash %}
 log4j2.formatMsgNoLookups=true
 {% endhighlight %}
 
 3. If none of the above works, you can remove the `JndiLookup` class from the classpath:
-{% highlight %}
+{% highlight bash %}
 zip -q -d log4j-core-*.jar org/apache/logging/log4j/core/lookup/JndiLookup.class
 {% endhighlight %}
 This command will remove the class from the log4j-core.
