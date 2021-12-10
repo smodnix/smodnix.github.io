@@ -41,7 +41,7 @@ And the gist of it comes down to:
 log4j2.formatMsgNoLookups=true
 {% endhighlight %}
 
-3. If none of the above works, you can remove the `JndiLookup` class from the classpath:
+- If none of the above works, you can remove the `JndiLookup` class from the classpath:
 {% highlight bash %}
 zip -q -d log4j-core-*.jar org/apache/logging/log4j/core/lookup/JndiLookup.class
 {% endhighlight %}

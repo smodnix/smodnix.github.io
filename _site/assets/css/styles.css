@@ -104,7 +104,7 @@ h1 > code, h2 > code, h3 > code { font-size: 0.80em; }
 
 .marginnote > code, .sidenote > code { font-size: 1rem; }
 
-pre > code { font-size: 1rem; width: 52.5%; margin-left: 2.5%; overflow-x: auto; display: block; }
+pre > code { font-size: 1rem; margin-left: 2.5%; overflow-x: auto; display: block; }
 
 pre.fullwidth > code { width: 90%; }
 
