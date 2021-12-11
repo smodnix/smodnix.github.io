@@ -5,7 +5,7 @@ title: logbook
 <h1>The Logbook</h1>
 <section>
 <ul>
-  {% for log in site.logs %}
+  {% for log in site.logs reversed %}
     <li>
       <a href="{{ log.url | relative_url }}">{{ log.title }}</a> - {{ log.date | date_to_string: "ordinal", "US" }}
     </li>
