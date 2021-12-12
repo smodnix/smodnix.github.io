@@ -5,6 +5,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ "/assets/css/styles.css" | relative_url }}">
+    <style>
+      .sideline {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        display: none;
+      }
+      
+      @media (hover: hover) and (min-width: 1081px) {
+          .sidenote:hover + .sideline {
+            display: block;
+          }
+          .sidenote-number:hover + .margin-toggle + .sidenote + .sideline {
+            display: block;
+          }
+      }
+      </style>
     <script src="{{ "/assets/js/sideline.js" | relative_url }}"></script>
     {% feed_meta %}
     {% seo %}
