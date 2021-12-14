@@ -373,5 +373,6 @@ JavaScript Strings Literals | `<script>var id = '<%= escape_javascript user-cont
 ----
 
 ## References
-- [https://cheatsheetseries.owasp.org/cheatsheets/Ruby_on_Rails_Cheat_Sheet.html](https://cheatsheetseries.owasp.org/cheatsheets/Ruby_on_Rails_Cheat_Sheet.html)
 - [https://guides.rubyonrails.org/security.html](https://guides.rubyonrails.org/security.html)
+- [https://developer.mozilla.org/en-US/docs/Web](https://developer.mozilla.org/en-US/docs/Web)
+- [https://cheatsheetseries.owasp.org/cheatsheets/Ruby_on_Rails_Cheat_Sheet.html](https://cheatsheetseries.owasp.org/cheatsheets/Ruby_on_Rails_Cheat_Sheet.html)
