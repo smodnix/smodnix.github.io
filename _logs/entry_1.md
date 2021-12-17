@@ -17,5 +17,3 @@ without further ado, mentioned bug it's called "BigSig" that found in NSS{% side
 - The oss-fuzz code coverage metrics should be divided by fuzzer, not by project.
 
 honestly, I'm not very interested in fuzzing, but this detailed writeup help me learn some new cool things.
-
-{% gist 5555251 %}
