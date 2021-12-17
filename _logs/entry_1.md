@@ -18,4 +18,4 @@ without further ado, mentioned bug it's called "BigSig" that found in NSS{% side
 
 honestly, I'm not very interested in fuzzing, but this detailed writeup help me learn some new cool things.
 
-
+{% gist 5555251 %}
