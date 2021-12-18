@@ -5,7 +5,7 @@ title: About
 
 # About me
 
-I'm Ilkin Qasimov, also known as smodnix. I passionate about web application security.
+I'm Ilkin Gasimov, also known as smodnix. I passionate about web application security.
 
 I also love labs/wargames, so here are some I have completed:
 

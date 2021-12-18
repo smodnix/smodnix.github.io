@@ -7,7 +7,7 @@ title: Home
 ---
 # Welcome
 
-I'm Ilkin Qasimov, also known as [smodnix](/about). This is my technical blog, where I discuss mostly related to **web application security**. Also planning to write my personal notes and thoughts about various topics. 
+I'm Ilkin Gasimov, also known as [smodnix](/about). This is my technical blog, where I discuss mostly related to **web application security**. Also planning to write my personal notes and thoughts about various topics. 
 
 ## Writing
 <ul>
