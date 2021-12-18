@@ -13,7 +13,7 @@ I also love labs/wargames, so here are some I have completed:
 - TryHackMe
 - IO Netgarage (02-10)
 
-If you are interested in working with me, here is my [Résumé]({{ "files/resume.pdf" | relative_url }}){:target="_blank"}{:rel="noopener noreferrer"}.
+If you are interested in working with me, here is my [Résumé]({{ "files/IlkinGasimov_Resume.pdf" | relative_url }}){:target="_blank"}{:rel="noopener noreferrer"}.
 
 ## Contact / Links
 
