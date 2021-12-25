@@ -62,6 +62,6 @@ kramdown:
   highlighter: rouge
   input: GFM
 include: ['_logs']
-include: [".well-known"]
+include: ['.well-known']
 sass:
    sourcemap: never
