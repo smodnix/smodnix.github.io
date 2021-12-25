@@ -1,0 +1,68 @@
+==================================================================
+https://keybase.io/smodnix
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://smodnix.github.io
+  * I am smodnix (https://keybase.io/smodnix) on keybase.
+  * I have a public key with fingerprint E385 E560 F72E D8BF FF5C  B7D9 671F B1D0 3AA0 0278
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "010116ca5f2cdd3083b2b9903012c54652772a38542bf10041085f4872f94bb3b1c40a",
+      "fingerprint": "e385e560f72ed8bfff5cb7d9671fb1d03aa00278",
+      "host": "keybase.io",
+      "key_id": "671fb1d03aa00278",
+      "kid": "010116ca5f2cdd3083b2b9903012c54652772a38542bf10041085f4872f94bb3b1c40a",
+      "uid": "934b4bd5e1c5c5e1c638db6a4c3a4b19",
+      "username": "smodnix"
+    },
+    "service": {
+      "hostname": "smodnix.github.io",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 1
+  },
+  "ctime": 1640425208,
+  "expire_in": 157680000,
+  "prev": "63897219673c23e034df8faeca77184a79e5a67b2aefc8e974e6df8e491da7bd",
+  "seqno": 9,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v2.1.13
+Comment: https://keybase.io/crypto
+
+yMIrAnicrVJtSBRBGL7LzDI1jaioMNk+EDGb2Z39ugxRin5ElIZBEZwzu7Pemu5e
+d3unogeloWUFYVlSRlAZQf2wjKzAtLQPDYouIYIQJRJ/XF8oJUEfu1Y/gn42P2aY
+d57nned5ePuT41yJ7v0jq5K+H35Y5n5y70zIhR+OTdUwxFSrGU8Ns4dOH7RcpUHL
+u0dXGQ8DIIBQUDCvsYqqckDiCEtkGXAAsgqPBJ4VRRZzEo9YokEAEAQSryFJZDUZ
+EcIRqCCAmWxG041SGvAHdMOy21KbQXkBaCJLVYlomsYrRFRlQYQagSrgMAaAFSWb
+6DODDsMWR3CQ5uimXbMv3ml5/8D/Z92h6XYyhwgiKk+hwivOLnCSSgSMFA4jAmUH
+GKQBA1dQGx2sMFVDr2Ii2YxdDOsKdXJ1jPwNyCnVLV+I/PLkD5iWqZjl9rPPsvxB
+j0O3qv0OvpIS7+9OXqIbqp2lzQjTQFA3DcYDbaRi6U5rKCCAWJ4FUjZDq/x6gHp1
+B8GLggTs5fxDw05ynCSLLLQT5xSWo4BDqiZpmCpYFKGEsChTHgsiYTHVFInKIqKC
+jaBIhioWico43vYaJuORbZm41HGllxrYCgUoE7nfu3umy53omhU/w5kxV+Kc1D+T
+V3tktutJUVJe0XK9Pb3/du+V+peehhJfalFf24aJkfrcp6nc0Inkxowl7a9i83a6
+Cg5V7yhsKeu89HloNHN2ce/b5quhjNh40kB0cnOre1tT65eE8PvtmRPC2WcvKiq7
+cgfGO1rfFN+4XviYf1b3PnLyx/x91dHF3+DMKvBpTXTZpdxbefHPPwYuupRHB3ad
+P3bnx6Kt1yILrvo7Bw6mhDsmWt/15DclLfRrE7XnRofR6c4UY7Lrw9JPz7t7Vwzm
+5LKX66sudGd8bzlOYq9ep40pWfBm47q1Prksv68/mtoZresa/Ppo8YOpu3GZbenu
+TYPi8FDDZKy5YH0W6lmZUHJq7sajaau3/ASA9UfC
+=O6rE
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/smodnix
+
+==================================================================
