@@ -5,7 +5,9 @@ title: About
 
 # About me
 
-I'm Ilkin Gasimov, also known as smodnix. I passionate about web application security.
+My name is Ilkin Gasimov, known as smodnix.
+
+I am application security researcher with expertise in Web. My skills are self-taught, Having the ability to develop and think outside the box. In my previous role I’ve done web development, also have interested in a bit reverse engineering and binary exploitation.
 
 I also love labs/wargames, so here are some I have completed:
 
