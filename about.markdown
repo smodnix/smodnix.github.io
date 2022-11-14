@@ -24,3 +24,4 @@ If you are interested in working with me, here is my [Résumé]({{ "files/IlkinG
 - Github: [smodnix](https://github.com/smodnix){:target="_blank"}{:rel="noopener noreferrer"}
 - Keybase: [smodnix](https://keybase.io/smodnix){:target="_blank"}{:rel="noopener noreferrer"}
 - Twitter: [smodnix](https://twitter.com/smodnix){:target="_blank"}{:rel="noopener noreferrer"}
+- Mastodon: [smodnix](https://infosec.exchange/@smodnix){:target="_blank"}{:rel="me"}
