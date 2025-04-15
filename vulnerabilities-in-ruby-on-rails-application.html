@@ -1,0 +1,503 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <style>
+      .sideline {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        display: none;
+      }
+      
+      @media (hover: hover) and (min-width: 1081px) {
+          .sidenote:hover + .sideline {
+            display: block;
+          }
+          .sidenote-number:hover + .margin-toggle + .sidenote + .sideline {
+            display: block;
+          }
+      }
+      </style>
+    <script src="/assets/js/sideline.js"></script>
+    <link type="application/atom+xml" rel="alternate" href="smodnix.github.io/feed.xml" title="smodnix&apos;s blog" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Vulnerabilities in Ruby on Rails Application | smodnix’s blog</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Vulnerabilities in Ruby on Rails Application" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Note: [This is incomplete post it will be edited]" />
+<meta property="og:description" content="Note: [This is incomplete post it will be edited]" />
+<link rel="canonical" href="smodnix.github.io/vulnerabilities-in-ruby-on-rails-application" />
+<meta property="og:url" content="smodnix.github.io/vulnerabilities-in-ruby-on-rails-application" />
+<meta property="og:site_name" content="smodnix’s blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-07-17T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Vulnerabilities in Ruby on Rails Application" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2021-07-17T00:00:00+00:00","datePublished":"2021-07-17T00:00:00+00:00","description":"Note: [This is incomplete post it will be edited]","headline":"Vulnerabilities in Ruby on Rails Application","mainEntityOfPage":{"@type":"WebPage","@id":"smodnix.github.io/vulnerabilities-in-ruby-on-rails-application"},"url":"smodnix.github.io/vulnerabilities-in-ruby-on-rails-application"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+  <body>
+    <input type="checkbox" id="lightswitch">
+    <div id="body">
+      <div id="container">
+    <header>
+      
+<nav>
+  <label for="lightswitch" id="lightswitch-label">☀</label>
+    
+    |
+      <a href="/" class="current">Home</a>
+    
+    |
+      <a href="/about" class="current">About</a>
+    
+    |
+      <a href="/files/IlkinGasimov_Resume.pdf" class="current">Résumé</a>
+    
+    |
+      <a href="/logs" class="current">Logs</a>
+    
+    |
+      <a href="/posts" class="current">Posts</a>
+    
+    |
+</nav>
+
+      <hr>
+    </header>
+    <section>
+      <h1>Vulnerabilities in Ruby on Rails Application</h1>
+<b>Published</b>: <span class="intro">Jul 17th, 2021</span>
+
+<h4 id="note-this-is-incomplete-post-it-will-be-edited">Note: [This is incomplete post it will be edited]</h4>
+
+<h2 id="injection-flaws">Injection Flaws</h2>
+
+<p>Generally injection vulnerabilities occur when untrusted data is placed into data that is passed to some sort of compiler or interpreter on the back-end server, where the data might, if it’s formatted in a particular way, be treated as something other than data.</p>
+
+<p><span class="newthought">Command Injection</span></p>
+
+<p>OS Command Injection <label for="1" class="margin-toggle sidenote-number"></label><input type="checkbox" id="1" class="margin-toggle" /><span class="sidenote"><a href="https://cwe.mitre.org/data/definitions/78.html" target="_blank" rel="noopener noreferrer">CWE-78: OS Command Injection</a> </span> is a type of injection vulnerability wherein commands injected by an attacker are executed as system commands on the host operating system.</p>
+
+<p>Not to be confused with <em>Code Injection</em> <label for="2" class="margin-toggle sidenote-number"></label><input type="checkbox" id="2" class="margin-toggle" /><span class="sidenote">Code Injection is the general term for attack types which consist of injecting code that is then interpreted/executed by the application. </span>, OS Command Injection extends the preset functionality of the application to execute system commands, whereas Code Injection attacks allow the attacker to add their own code to be executed by the application. In certain circumstances, Code Injection could be promoted to OS Command Injection by using the facilities provided by the language.</p>
+
+<p>The vulnerable example for this problem has always been API calls that directly call
+the system command interpreter without any validation.</p>
+
+<h4 id="vulnerable-example">Vulnerable example</h4>
+
+<p>The following snippet contains a Ruby on Rails model that executes the <code class="language-plaintext highlighter-rouge">nslookup</code> command to resolve the host supplied by the user.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Resolver</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+ <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">lookup</span><span class="p">(</span><span class="n">hostname</span><span class="p">)</span>
+    <span class="nb">system</span><span class="p">(</span><span class="s2">"nslookup </span><span class="si">#{</span><span class="n">hostname</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+ <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>Since the <code class="language-plaintext highlighter-rouge">hostname</code> is simply interpolated into the string command and executed on a subshell, an attacker could stack another command using <code class="language-plaintext highlighter-rouge">;</code> in the GET parameter to inject additional commands:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">&gt;</span> nslookup x<span class="p">;</span><span class="nb">cat</span> /etc/passwd
+Server:         8.8.8.8
+Address:        8.8.8.8#53
+
+<span class="k">**</span> server can<span class="s1">'t find x: NXDOMAIN
+
+root:x:0:0::/root:/bin/bash
+bin:x:1:1::/:/usr/bin/nologin
+daemon:x:2:2::/:/usr/bin/nologin</span></code></pre></figure>
+
+<h3 id="remediation">Remediation</h3>
+
+<p>Ruby has a native API to execute commands. Many of the APIs ingest arguments as a list, which shall be always preferred over sending multiple arguments as single strings. This helps to avoid introducing command injection vulnerabilities.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">exec</span><span class="p">([</span><span class="n">cmdname</span><span class="p">,</span> <span class="n">argv0</span><span class="p">],</span> <span class="n">arg1</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="c1"># Or exec(cmdname, arg1, ...)</span>
+<span class="nb">system</span><span class="p">([</span><span class="n">cmdname</span><span class="p">,</span> <span class="n">argv0</span><span class="p">],</span> <span class="n">arg1</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="c1"># Or system(cmdname, arg1, ...)</span>
+<span class="no">IO</span><span class="p">.</span><span class="nf">popen</span><span class="p">([</span><span class="n">env</span><span class="p">,</span> <span class="p">[</span><span class="n">cmdname</span><span class="p">,</span> <span class="n">argv0</span><span class="p">],</span> <span class="n">arg1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">opts</span><span class="p">])</span> <span class="c1"># Or IO.popen([env, cmdname, argv1, arg1, ..., opts])</span>
+<span class="no">Open3</span><span class="p">.</span><span class="nf">popen3</span><span class="p">([</span><span class="n">cmdname</span><span class="p">,</span> <span class="n">argv0</span><span class="p">],</span> <span class="n">arg1</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="p">{}</span> <span class="c1"># Methods popen2 and popen2e also exist</span>
+<span class="no">Open3</span><span class="p">.</span><span class="nf">capture2</span><span class="p">([</span><span class="n">cmdname</span><span class="p">,</span> <span class="n">argv0</span><span class="p">],</span> <span class="n">arg1</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="p">{}</span> <span class="c1"># Methods capture2 and capture2e also exits</span></code></pre></figure>
+
+<p>Passing the command as a single string introduces the vulnerability:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">system</span><span class="p">(</span><span class="s2">"nslookup </span><span class="si">#{</span><span class="n">hostname</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>    <span class="c1"># WRONG</span></code></pre></figure>
+
+<h4 id="secure-example">Secure example</h4>
+
+<p>Passing the command as a list of arguments is the safer approach that should always be used, but it might be vulnerable to argument injection depending on the binary.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">system</span><span class="p">(</span><span class="s2">"nslookup"</span><span class="p">,</span> <span class="n">hostname</span><span class="p">)</span></code></pre></figure>
+
+<p>Some methods only accept the command argument as a single string and are prone to introducing an injection vulnerability. These functions should not be used, or at least used very carefully, to escape or filter out the characters against an allow list (e.g. filtering out everything that is not alphanumeric).</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="sb">`cmd`</span> <span class="c1"># Or Kernel.`("cmd")</span>
+<span class="sx">%x( cmd )</span></code></pre></figure>
+
+<hr />
+
+<p><span class="newthought">SQL Injection</span></p>
+
+<p>SQL injection <label for="3" class="margin-toggle sidenote-number"></label><input type="checkbox" id="3" class="margin-toggle" /><span class="sidenote"><a href="http://guides.rubyonrails.org/security.html#sql-injection" target="_blank" rel="noopener noreferrer">SQL Injection</a> </span> is a common attack that uses malicious SQL code for backend database manipulation to access information that was not intended to be displayed or changed.</p>
+
+<figure><img src="https://imgs.xkcd.com/comics/exploits_of_a_mom.png" /><figcaption class="maincolumn-figure"><em>Exploits of a Mom</em>, from <a href="https://xkcd.com/327/" target="_blank" rel="noopener noreferrer">xkcd</a></figcaption></figure>
+
+<p>An attacker can use SQL Injection to manipulate an SQL query via the input data from the client to the application, thus forcing the SQL server to execute an unintended operation constructed using untrusted input.</p>
+
+<p>Applications are vulnerable to attacks when user-supplied data is not validated, filtered for escape characters or sanitized by the application.</p>
+
+<h3 id="remediation-1">Remediation</h3>
+
+<p>To avoid SQL injection vulnerabilities, developers need to use <em>parameterized queries</em> <label for="4" class="margin-toggle sidenote-number"></label><input type="checkbox" id="4" class="margin-toggle" /><span class="sidenote"><a href="https://cheatsheetseries.owasp.org/cheatsheets/Query_Parameterization_Cheat_Sheet.html#using-ruby-with-activerecord" target="_blank" rel="noopener noreferrer">Query Parameterization for Ruby on Rails.</a> </span>, specifying placeholders for parameters so that they are not considered as a part of the SQL command; rather, as solely data by the database.</p>
+
+<p>When working with legacy systems, developers need to escape inputs before adding them to the query. Object relational mappers (ORMs) make this easier for the developer; however, they are not a panacea, with the underlying mitigations still entirely relevant: 
+<strong>untrusted data needs to be validated, query concatenation should be avoided unless absolutely necessary, and minimizing unnecessary SQL account privileges is crucial</strong>.</p>
+
+<p>Ruby on Rails provides an interface called <em>Active Record</em> <label for="5" class="margin-toggle sidenote-number"></label><input type="checkbox" id="5" class="margin-toggle" /><span class="sidenote"><a href="https://guides.rubyonrails.org/active_record_basics.html" target="_blank" rel="noopener noreferrer">Active Record Basics.</a> </span>, an object-relational mapping (ORM) abstraction that facilitates database access. The following snippet of code displays the User model performing email and password validation, as well as conducting some authenticated actions:</p>
+
+<h4 id="vulnerable-example-1">Vulnerable example</h4>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">if</span> <span class="no">User</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="s2">"email = '</span><span class="si">#{</span><span class="n">address</span><span class="si">}</span><span class="s2">' and password = '</span><span class="si">#{</span><span class="n">password</span><span class="si">}</span><span class="s2">'"</span><span class="p">).</span><span class="nf">exists?</span>
+   <span class="c1"># Do something as authenticated in user</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>Since the SQL query is built by concatenating <code class="language-plaintext highlighter-rouge">address</code> and <code class="language-plaintext highlighter-rouge">password</code> user inputs, an attacker could manipulate the query to bypass the authentication check.</p>
+
+<p>For example, by injecting <code class="language-plaintext highlighter-rouge">mail@attacker.com') or ('1'='1</code> and an incorrect password in the <code class="language-plaintext highlighter-rouge">address</code> field, the query becomes:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">SELECT</span> <span class="sb">`users`</span><span class="p">.</span><span class="nf">*</span> <span class="no">FROM</span> <span class="sb">`users`</span> <span class="no">WHERE</span> <span class="p">(</span><span class="n">email</span> <span class="o">=</span> <span class="s1">'mail@attacker.com'</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s1">'1'</span><span class="o">=</span><span class="s1">'1'</span> <span class="ow">and</span> <span class="n">password</span> <span class="o">=</span> <span class="s1">'wrongpassword'</span><span class="p">)</span></code></pre></figure>
+
+<p>The manipulated query returns the user record whose email equals <code class="language-plaintext highlighter-rouge">mail@attacker.com</code> or if <code class="language-plaintext highlighter-rouge">1</code> equals <code class="language-plaintext highlighter-rouge">1</code> and whose password equals <code class="language-plaintext highlighter-rouge">wrongpassword</code>. Since the password is not relevant anymore but the <code class="language-plaintext highlighter-rouge">WHERE</code> clause is true, an attacker could log in without having a valid password simply with a valid e-mail.</p>
+
+<p>Active Record has a built-in filter for special SQL characters, which will escape <code class="language-plaintext highlighter-rouge">'</code>, <code class="language-plaintext highlighter-rouge">"</code>, <code class="language-plaintext highlighter-rouge">NULL</code> character and line breaks. Using <code class="language-plaintext highlighter-rouge">Model.find(id)</code> or <code class="language-plaintext highlighter-rouge">Model.find_by_some thing(something)</code> automatically applies this countermeasure. But in SQL fragments, especially in conditions fragments <code class="language-plaintext highlighter-rouge">where()</code>, the <code class="language-plaintext highlighter-rouge">connection.execute()</code> or <code class="language-plaintext highlighter-rouge">Model.find_by_sql()</code> methods, it has to be applied manually.</p>
+
+<h4 id="secure-example-1">Secure example</h4>
+
+<p>Instead of concatenating the user-provided variables to the condition string, you can pass an array to sanitize tainted strings like this:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">User</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="s2">"email = ? AND password = ?"</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">password</span><span class="p">).</span><span class="nf">exists?</span></code></pre></figure>
+
+<p>You can also pass a hash for the same result:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">User</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="ss">email: </span><span class="n">address</span><span class="p">,</span> <span class="ss">password: </span><span class="n">password</span><span class="p">).</span><span class="nf">exists?</span></code></pre></figure>
+
+<p>The array or hash form is only available in model instances. You can try <code class="language-plaintext highlighter-rouge">sanitize_sql()</code> <label for="6" class="margin-toggle sidenote-number"></label><input type="checkbox" id="6" class="margin-toggle" /><span class="sidenote"><a href="https://api.rubyonrails.org/classes/ActiveRecord/Sanitization/ClassMethods.html#method-i-sanitize_conditions" target="_blank" rel="noopener noreferrer">ActiveRecord::Sanitization methods</a> </span> elsewhere.</p>
+
+<hr />
+
+<h2 id="authentication-flaws">Authentication Flaws</h2>
+
+<p>There is an old saying that used often in application security:</p>
+
+<blockquote>
+  <blockquote>
+    <blockquote>
+      <blockquote>
+        <blockquote>
+          <p>“don’t reinvent the wheel”</p>
+        </blockquote>
+      </blockquote>
+    </blockquote>
+  </blockquote>
+</blockquote>
+
+<p>That is exactly the same case for this topic.</p>
+
+<p><span class="newthought">Broken Authorization</span></p>
+
+<p>Broken Authorization <label for="7" class="margin-toggle sidenote-number"></label><input type="checkbox" id="7" class="margin-toggle" /><span class="sidenote"><a href="https://owasp.org/www-project-top-ten/2017/A2_2017-Broken_Authentication" target="_blank" rel="noopener noreferrer">OWASP Broken Authorization</a> </span> (also known as <em>Broken Access Control</em> or <em>Privilege Escalation</em>) is the hypernym for a range of flaws that arise due to the ineffective implementation of authorization checks used to designate user access privileges.</p>
+
+<p>Different users are permitted or denied access to various content and functions in adequately designed and implemented authorization frameworks depending on the user’s designated role and corresponding privileges.</p>
+
+<p>For example, in a web application, authorization is subject to authentication and session management. However, designing authorization across dynamic systems is complex, and may result in inconsistent mechanisms being written as the applications evolve: authentication libraries and protocols change, user roles do as well, more users come, users go, some users are (not) removed when gone… access control design decisions are made not by technology, but by humans, so the potential for error is high and ever-present.</p>
+
+<p>In a successful attack, a malicious actor may be able to access unauthorized content, change or delete content, perform functions, and even assume full control of site administration. Once this level of compromise has been achieved, the damage of the attack is limited only by the privileges granted to the impersonated victim.</p>
+
+<h3 id="attack-scenarios">Attack Scenarios</h3>
+
+<p>From the perspective of the user, there are two main categories of authorization controls to consider:</p>
+<blockquote>
+  <ul>
+    <li>Horizontal Authorization Controls</li>
+    <li>Vertical Authorization Controls</li>
+  </ul>
+</blockquote>
+
+<p><strong>Horizontal Authorization Control Bypass</strong></p>
+
+<p>Bypassing Horizontal Authorization Controls describes the act of an unprivileged user gaining access to other users’ accounts that possess equal privileges.</p>
+
+<p>For example, imagine an application accepting unverified data in a method call downstream to retrieve account information. An attacker could easily modify the <code class="language-plaintext highlighter-rouge">accountId</code> parameter in the HTTP Request to retrieve data from one or even multiple other users’ accounts.</p>
+
+<p>The application uses unverified data in a method call downstream to retrieve account information:</p>
+
+<p><code class="language-plaintext highlighter-rouge">http://example.com/account?accountId=7800001</code></p>
+
+<p><code class="language-plaintext highlighter-rouge">http://example.com/account?accountId=7800002</code></p>
+
+<p>Insecure Direct Object References <label for="8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="8" class="margin-toggle" /><span class="sidenote"><a href="https://guides.rubyonrails.org/security.html#privilege-escalation" target="_blank" rel="noopener noreferrer">Insecure Direct Object References</a> </span>, or IDOR, is a related scenario involving user-supplied input being utilized to access objects directly.</p>
+
+<p><strong>Vertical Authorization Control Bypass</strong></p>
+
+<p><em>Vertical Authorization Control</em> bypasses describe the <em>upwards</em> use of access. That is, when a user with a certain level of privilege can indicate that they possess some higher level of access, like administrative level access, to the application.</p>
+
+<p>In this example, an attacker has browsed to an administrative URL, where admin rights <em>should</em> be required to access the adin page.</p>
+
+<p><code class="language-plaintext highlighter-rouge">http://example.com/user/account</code></p>
+
+<p><code class="language-plaintext highlighter-rouge">http://example.com/admin/panel</code></p>
+
+<p>If the application does not check whether the role of the session user matches the role required to access the resource, a user without admin privileges will be able to access the page by simply knowing/guessing the target URL and browsing to it.</p>
+
+<h4 id="vulnerable-example-2">Vulnerable example</h4>
+<p>The following Ruby snippet shows a Ruby on Rails controller that pulls the user from the request parameter, looking up the user email passed as a parameter in the URL:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">restricted</span>
+  <span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">email: </span><span class="n">params</span><span class="p">[</span><span class="ss">:email</span><span class="p">])</span>
+  <span class="k">if</span> <span class="o">!</span><span class="p">(</span><span class="vi">@user</span><span class="p">)</span>
+    <span class="n">flash</span><span class="p">[</span><span class="ss">:error</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Sorry, invalid user"</span>
+    <span class="n">redirect_to</span> <span class="n">public_index_path</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>This could be abused by any user to access the restricted API by invoking it, passing the email address of another legitimate user as a parameter.</p>
+
+<h3 id="remediation-2">Remediation</h3>
+
+<p>User management and authentication are not native features of Rails, but they can easily be added by either writing the code or adding a gem, such as <a href="https://github.com/heartcombo/devise">Devise</a>.</p>
+
+<p><strong>Authorized user</strong></p>
+
+<p>A simple manual approach is to add a method that retrieves the current, logged-in user looking up active sessions to the Application Controller. It is frequent to add e.g. <code class="language-plaintext highlighter-rouge">current_user</code> method in the <code class="language-plaintext highlighter-rouge">ApplicationController</code> class to make sure every controller in the application inherits it.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">ApplicationController</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">Base</span>
+  <span class="k">def</span> <span class="nf">current_user</span>    
+      <span class="no">User</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">id: </span><span class="n">session</span><span class="p">[</span><span class="ss">:user_id</span><span class="p">])</span>  
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>Such method takes the user ID value from the user’s session and is resilient against tampering. It can be easily invoked by other controllers such as the one shown in this snippet:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">restricted</span>
+  <span class="vi">@user</span> <span class="o">=</span> <span class="n">current_user</span>
+  <span class="k">if</span> <span class="o">!</span><span class="p">(</span><span class="vi">@user</span><span class="p">)</span>
+    <span class="n">flash</span><span class="p">[</span><span class="ss">:error</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Sorry, invalid user"</span>
+    <span class="n">redirect_to</span> <span class="n">public_index_path</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p><strong>Role-based authorization</strong></p>
+
+<p>It’s common to set access restrictions based on roles in order to check if a user has a specific role (such as administrator) and either allow access or redirect with an “Access Denied” message. Roles are attributes associated with a user account and implemented in a User schema and model.</p>
+
+<p>The simplest scenario is a binary role scenario when a user can be either an administrator or an ordinary user. Add a boolean attribute to the <code class="language-plaintext highlighter-rouge">User</code> schema to indicate whether a user is an administrator or not and check the role checking the <code class="language-plaintext highlighter-rouge">@user.admin</code> attribute value:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">restricted</span>
+  <span class="vi">@user</span> <span class="o">=</span> <span class="n">current_user</span>
+  <span class="k">if</span> <span class="o">!</span><span class="p">(</span><span class="vi">@user</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="p">(</span><span class="vi">@user</span><span class="p">.</span><span class="nf">admin</span><span class="p">)</span>
+    <span class="n">flash</span><span class="p">[</span><span class="ss">:error</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Sorry, the user is not an administrator"</span>
+    <span class="n">redirect_to</span> <span class="n">public_index_path</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p><strong>Controller filters</strong></p>
+
+<p>Role-base controls can be also enforced using “<em>before</em>” filters in the <code class="language-plaintext highlighter-rouge">Controller</code> classes in order to halt the request cycle if a condition is not met. In the following snippet, the <code class="language-plaintext highlighter-rouge">restricted</code> method can be invoked only by users who satisfy the <code class="language-plaintext highlighter-rouge">administrative</code> filter:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">AdminController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+
+  <span class="n">before_filter</span> <span class="ss">:administrative</span>
+
+  <span class="k">def</span> <span class="nf">restricted</span>
+    <span class="vi">@user</span> <span class="o">=</span> <span class="n">current_user</span>
+    <span class="k">if</span> <span class="o">!</span><span class="p">(</span><span class="vi">@user</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="p">(</span><span class="vi">@user</span><span class="p">.</span><span class="nf">admin</span><span class="p">)</span>
+      <span class="n">flash</span><span class="p">[</span><span class="ss">:error</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Sorry, the user is not an administrator"</span>
+      <span class="n">redirect_to</span> <span class="n">public_index_path</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">administrative</span>
+    <span class="k">if</span> <span class="o">!</span><span class="n">current_user</span><span class="p">.</span><span class="nf">admin</span>
+     <span class="n">redirect_to</span> <span class="n">public_index_path</span>
+   <span class="k">end</span>
+  <span class="k">end</span>
+
+<span class="k">end</span></code></pre></figure>
+
+<p>Filters are inherited, so if you set a filter on <code class="language-plaintext highlighter-rouge">ApplicationController</code>, it will be run on every controller in your application.</p>
+
+<hr />
+
+<h2 id="client-side-validation-flaws">Client-side Validation Flaws</h2>
+
+<p><span class="newthought">Cross-Site Scripting</span></p>
+
+<p>Cross-Site Scripting (otherwise known as XSS) is a vulnerability that allows a malicious actor to manipulate a legitimate user’s interactions with a vulnerable web application. Attackers exploit this to bypass the <em>same origin policy</em> <label for="9" class="margin-toggle sidenote-number"></label><input type="checkbox" id="9" class="margin-toggle" /><span class="sidenote"><a href="https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy" target="_blank" rel="noopener noreferrer">Same-origin policy</a> </span>, often allowing them to perform any actions that the target user would normally perform, including gaining access to their data. In cases where the victim user has privileged application access, the attacker may use XSS to gain control of the application.</p>
+
+<p>XSS attacks can result in the disclosure of the user’s session cookie, allowing an attacker to hijack the user’s session and take over the account. Even though <code class="language-plaintext highlighter-rouge">HTTPOnly</code> is used to protect cookies, an attacker can still execute actions on behalf of the user in the context of the affected website.</p>
+
+<p>XSS attacks can generally be divided into the following three categories:</p>
+
+<p><strong>Reflected XSS</strong></p>
+
+<p>Reflected XSS attacks arise when a web server reflects injected script, such as a search result, an error message, or any other response that includes some or all of the input sent to the server as part of the request.</p>
+
+<p>The attack is then delivered to the victim through another route (e.g. e-mail or alternative website), thus tricking the user into clicking on a malicious link. The injected code travels to the vulnerable website, which reflects the attack payload back to the user’s browser. The browser then executes the code because it came from a “trusted” server</p>
+
+<p><strong>Stored XSS</strong></p>
+
+<p>In the Stored XSS attack, the injected script is stored on the target application as legitimate content, such as a message in a forum, a comment in a blog post, etc. The injected code is stored in the database and sent to the users when it is retrieved by accessing the injected content, executing the attack payload in the victim’s browser.</p>
+
+<p><strong>Dom-based XSS</strong></p>
+
+<p>DOM-based XSS vulnerabilities usually occur when the JavaScript in a page takes user-provided data from a source in the HTML, such as the <code class="language-plaintext highlighter-rouge">document.location</code>, and passes it to a JavaScript function that allows JavaScript code to be run, such as <code class="language-plaintext highlighter-rouge">innerHTML()</code>. The classic attack delivers the payload to the victim through another route (e.g. e-mail or alternative website) and thus tricks the user into visiting a malicious link. The exploitation is client-side, and the code is immediately executed in the user’s browser.</p>
+
+<h3 id="remediation-3">Remediation</h3>
+
+<p>XSS attacks can be mitigated by performing appropriate server-side validation and escaping. Remediation relies on performing Output Encoding (e.g. using an escape syntax) for the type of HTML context where untrusted data is reflected into.</p>
+
+<p><strong>Input Validation</strong> <label for="10" class="margin-toggle sidenote-number"></label><input type="checkbox" id="10" class="margin-toggle" /><span class="sidenote"><a href="https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">Input Validation</a> </span></p>
+
+<ul>
+  <li>Exact Match: Only accept values from a finite list of known values.</li>
+  <li>Allow list: If a list of all the possible values can’t be created, accept only known good data and reject all unexpected input.</li>
+  <li>Deny list: If an allow-list approach is not feasible (on free form text areas, for example) reject all known bad values.</li>
+</ul>
+
+<p><strong>Output Encoding</strong></p>
+
+<p><em>Output Encoding</em> <label for="11" class="margin-toggle sidenote-number"></label><input type="checkbox" id="11" class="margin-toggle" /><span class="sidenote"><a href="https://owasp.org/www-project-proactive-controls/v3/en/c4-encode-escape-data" target="_blank" rel="noopener noreferrer">Output encoding</a> </span> is used to convert untrusted input into a safe form where the input is displayed as <strong>data</strong> to the user without executing as <strong>code</strong> in the browser. Output Encoding is performed when the data leaves the application to a downstream component. The table below lists the possible downstream contexts where the untrusted input could be used:</p>
+
+<h3 id="defense-in-depth">Defense in Depth</h3>
+
+<p><strong>Content Security Policy (CSP)</strong></p>
+
+<p><em>The Content Security Policy (CSP)</em> <label for="12" class="margin-toggle sidenote-number"></label><input type="checkbox" id="12" class="margin-toggle" /><span class="sidenote"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP" target="_blank" rel="noopener noreferrer">Content Security Policy</a> </span> is a browser mechanism that enables the creation of source allow lists for client-side resources of web applications e.g. JavaScript, CSS, images etc. CSP via a special HTTP header instructs the browser to only execute or render resources from those sources.</p>
+
+<p>For example:</p>
+
+<p><code class="language-plaintext highlighter-rouge">Content-Security-Policy: default-src: 'self'; script-src: 'self' static.domain.tld</code></p>
+
+<p>The above CSP will instruct the web browser to load all resources only from the page’s origin, and JavaScript source code files additionally from <code class="language-plaintext highlighter-rouge">static.domain.tld</code>. For more details on Content Security Policy, including what it does and how to use it, see <a href="https://content-security-policy.com/">this</a> article.</p>
+
+<p><strong>X-XSS-Protection Header</strong></p>
+
+<p>This HTTP response header enables the Cross-Site Scripting (XSS) filter built into some modern web browsers. The header is usually enabled by default anyway, so its role is to re-enable the filter for a particular website if it was disabled by the user.</p>
+
+<h3 id="rails-by-default">Rails by Default</h3>
+
+<p>Rails provides ERB (Embedded RuBy) as a template engine to generate dynamic web pages.</p>
+
+<p>Before Rails 3.x, the function <code class="language-plaintext highlighter-rouge">escapeHTML()</code> (or its alias <code class="language-plaintext highlighter-rouge">h()</code>) needed to be called to escape HTML output in all templates, but in more recent versions, it is on by default in all of the view templates.</p>
+
+<p>To bypass the automatic encoding in recent Rails versions, calling <code class="language-plaintext highlighter-rouge">html_safe</code> or prepending <code class="language-plaintext highlighter-rouge">raw</code> on a string sets the string as HTML Safe, and ERB inserts it unaltered into the output.</p>
+
+<p>Strings in JavaScript contexts should be explicitly encoded by prepending <code class="language-plaintext highlighter-rouge">escape_javascript</code> or <code class="language-plaintext highlighter-rouge">j</code> to the variable. This escaping does not encode generic JavaScript code and should only be used with JavaScript string literals.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th><strong>Context</strong></th>
+      <th><strong>Code</strong></th>
+      <th><strong>Rails &gt;=3.x ERB Encoding mechanisms</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>HTML Code and Attribute</td>
+      <td><code class="language-plaintext highlighter-rouge">&lt;%= user-controlled-variable %&gt;</code></td>
+      <td><a href="https://guides.rubyonrails.org/layouts_and_rendering.html#rendering-html">HTML Escaped</a> Encode data for use in HTML using HTML entity encoding</td>
+    </tr>
+    <tr>
+      <td>JavaScript Strings Literals</td>
+      <td><code class="language-plaintext highlighter-rouge">&lt;script&gt;var id = '&lt;%= escape_javascript user-controlled-variable %&gt;';&lt;/script&gt;</code></td>
+      <td><a href="https://api.rubyonrails.org/classes/ActionView/Helpers/JavaScriptHelper.html">Escapes carriage returns and single and double quotes for JavaScript strings.</a>  Encode data for insertion inside a JavaScript string</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Handling User Input</strong></p>
+
+<ul>
+  <li>
+    <p>Always validate user input that may eventually be displayed to other users. Attempting to blacklist characters, strings or sanitize input tends to be ineffective (see examples of how to bypass such blacklists). A whitelisting approach is usually safer. Mitigates multiple XSS attacks.</p>
+  </li>
+  <li>
+    <p>When using regex for input validation, use \A and \z to match string beginning and end. Do not use ^ and $ as anchors. Mitigates XSS attacks that involve slipping JS code after line breaks, such as <code class="language-plaintext highlighter-rouge">me@example.com\n&lt;script&gt;dangerous_stuff();&lt;/script&gt;</code>.</p>
+  </li>
+  <li>
+    <p>Do not trust validations implemented at the client (frontend) as most implementations can be bypassed. Always (re)validate at the server.</p>
+  </li>
+</ul>
+
+<p><strong>Output Escaping &amp; Sanitization</strong></p>
+
+<ul>
+  <li>
+    <p>Escape all HTML output. Rails does that by default, but calling html_safe or raw at the view suppresses escaping. Look for calls to these methods in the entire project, check if you are generating HTML from user-inputted strings and if those strings are effectively validated. Note that there are dozens of ways to evade validation. If possible, avoid calling html_safe and raw altogether.</p>
+  </li>
+  <li>
+    <p>Always enclose attribute values with double quotes. Even without html_safe, it is possible to introduce cross-site scripting into templates with unquoted attributes. In the following code &lt;p class=&lt;%= params[:style] %&gt;…&lt;/p&gt;, an attacker can insert a space into the style parameter and suddenly the payload is outside the attribute value and they can insert their own payload. And when a victim mouses over the paragraph, the XSS payload will fire.</p>
+  </li>
+  <li>
+    <p>Rendering JSON inside of HTML templates is tricky. You can’t just HTML escape JSON, especially when inserting it into a script context, because double-quotes will be escaped and break the code. But it isn’t safe to not escape it, because browsers will treat a &lt;/script&gt; tag as HTML no matter where it is. The Rails documentation recommends always using json_escape just in case to_json is overridden or the value is not valid JSON. Mitigates XSS attacks.</p>
+  </li>
+  <li>
+    <p>Be careful when using render inline: …. The value passed in will be treated like an ERB template by default. Take a look at this code: render inline: “Thanks #{@user.name}!”. Assuming users can set their own name, an attacker might set their name to &lt;%= rm -rf / %&gt; which will execute rm -rf / on the server! This is called Server Side Template Injection and it allows arbitrary code execution (RCE) on the server. If you must use an inline template treat all input the same as you would in a regular ERB template: render inline: “Thanks &lt;%= @user.name %&gt;”. Mitigates XSS attacks.</p>
+  </li>
+  <li>
+    <p>Avoid sending user inputted strings in e-mails to other users. Attackers may enter a malicious URL in a free text field that is not intended to contain URLs and does not provide URL validation. Most e-mail clients display URLs as links. Mitigates XSS, phishing, malware infection and other attacks.</p>
+  </li>
+  <li>
+    <p>If an I18n key ends up with _html, it will automatically be marked as html safe while the key interpolations will be escaped! See (example code).</p>
+  </li>
+</ul>
+
+<hr />
+
+<h2 id="references">References</h2>
+<ul>
+  <li><a href="https://guides.rubyonrails.org/security.html">https://guides.rubyonrails.org/security.html</a></li>
+  <li><a href="https://developer.mozilla.org/en-US/docs/Web">https://developer.mozilla.org/en-US/docs/Web</a></li>
+  <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Ruby_on_Rails_Cheat_Sheet.html">https://cheatsheetseries.owasp.org/cheatsheets/Ruby_on_Rails_Cheat_Sheet.html</a></li>
+</ul>
+
+
+    </section>
+
+      
+<footer id="footer">
+    <hr>
+    <i>Site proudly generated by
+    <a href="https://jekyllrb.com/">Jekyll</a> & hosted on <a href="https://pages.github.com/">Github</a></i> | <a href="/feed.xml">RSS</a> | <a href="https://html5.validator.nu/?doc=https://smodnix.github.io/"><b>This page is valid HTML</b></a>
+</footer>
+      </div>
+  </div>
+  
+  <!-- Colour theme switcher -->
+  <script>
+    const themeSwitch = document.querySelector('#lightswitch');
+    themeSwitch.checked = localStorage.getItem('switchedTheme') === 'true';
+
+    themeSwitch.addEventListener('change', function (e) {
+        if(e.currentTarget.checked === true) {
+            // Add item to localstorage
+            localStorage.setItem('switchedTheme', 'true');
+        } else {
+            // Remove item if theme is switched back to normal
+            localStorage.removeItem('switchedTheme');
+        }
+    });
+  </script>
+  <!-- Privacy-aware analytics by https://www.goatcounter.com/ -->
+  <script data-goatcounter="https://smod.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  </body>
+</html>

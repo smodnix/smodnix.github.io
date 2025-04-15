@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <style>
+      .sideline {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        display: none;
+      }
+      
+      @media (hover: hover) and (min-width: 1081px) {
+          .sidenote:hover + .sideline {
+            display: block;
+          }
+          .sidenote-number:hover + .margin-toggle + .sidenote + .sideline {
+            display: block;
+          }
+      }
+      </style>
+    <script src="/assets/js/sideline.js"></script>
+    <link type="application/atom+xml" rel="alternate" href="smodnix.github.io/feed.xml" title="smodnix&apos;s blog" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Entry 3 | smodnix’s blog</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Entry 3" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I read a blog postSimple things that are actually hard: User Authentication which talks about authentication and gives a nice inclusive checklist what should you pay attention when you building authentication in a system." />
+<meta property="og:description" content="I read a blog postSimple things that are actually hard: User Authentication which talks about authentication and gives a nice inclusive checklist what should you pay attention when you building authentication in a system." />
+<link rel="canonical" href="smodnix.github.io/logs/entry-3" />
+<meta property="og:url" content="smodnix.github.io/logs/entry-3" />
+<meta property="og:site_name" content="smodnix’s blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-12-19T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Entry 3" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2021-12-19T00:00:00+00:00","datePublished":"2021-12-19T00:00:00+00:00","description":"I read a blog postSimple things that are actually hard: User Authentication which talks about authentication and gives a nice inclusive checklist what should you pay attention when you building authentication in a system.","headline":"Entry 3","mainEntityOfPage":{"@type":"WebPage","@id":"smodnix.github.io/logs/entry-3"},"url":"smodnix.github.io/logs/entry-3"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+  <body>
+    <input type="checkbox" id="lightswitch">
+    <div id="body">
+      <div id="container">
+    <header>
+      
+<nav>
+  <label for="lightswitch" id="lightswitch-label">☀</label>
+    
+    |
+      <a href="/" class="current">Home</a>
+    
+    |
+      <a href="/about" class="current">About</a>
+    
+    |
+      <a href="/files/IlkinGasimov_Resume.pdf" class="current">Résumé</a>
+    
+    |
+      <a href="/logs" class="current">Logs</a>
+    
+    |
+      <a href="/posts" class="current">Posts</a>
+    
+    |
+</nav>
+
+      <hr>
+    </header>
+    <section>
+      <h1>Entry 3</h1>
+<b>Published</b>: <span class="intro">Dec 19th, 2021</span>
+
+<p>I read a blog post<label for="1" class="margin-toggle sidenote-number"></label><input type="checkbox" id="1" class="margin-toggle" /><span class="sidenote"><a href="https://techblog.bozho.net/simple-things-that-are-actually-hard-user-authentication/" target="_blank" rel="noopener noreferrer">Simple things that are actually hard: User Authentication</a> </span> which talks about authentication and gives a nice inclusive checklist what should you pay attention when you building authentication in a system.</p>
+
+<ul>
+  <li><strong>Cookie security</strong> – how to make it so that a cookie doesn’t leak or can’t be forged. Should you even have a cookie, or use some stateless approach like JWT, use SameSite lax or strict?</li>
+  <li>Bind cookie to IP and logout user if IP changes?</li>
+  <li><strong>Password requirements</strong> – minimum length, special characters? UI to help with selecting a password?</li>
+  <li><strong>Storing passwords in the database</strong> – bcrypt, scrypt, PBKDF2, SHA with multiple iterations?</li>
+  <li><strong>Allow storing in the browser?</strong> Generally “yes”, but some applications deliberately hash it before sending it, so that it can’t be stored automatically</li>
+  <li><strong>Email vs username</strong> – do you need a username at all? Should change of email be allowed?</li>
+  <li><strong>Rate-limiting authentication attempts</strong> – how many failed logins should block the account, for how long, should admins get notifications or at least logs for locked accounts? Is the limit per IP, per account, a combination of those?</li>
+  <li><strong>Captcha</strong> – do you need captcha at all, which one, and after how many attempts? Is Re-Captcha an option?</li>
+  <li><strong>Password reset</strong> – password reset token database table or expiring links with HMAC? Rate-limit password reset?</li>
+  <li><strong>SSO</strong> – should your service should support LDAP/ActiveDirectory authentication (probably yes), should it support SAML 2.0 or OpenID Connect, and if yes, which ones? Or all of them? Should it ONLY support SSO, rather than internal authentication?</li>
+  <li><strong>2FA</strong> – TOTP or other? Implement the whole 2FA flow, including enable/disable and use or backup codes; add option to not ask for 2FA for a particular device for a period of time? Configuring subset of AD/LDAP users to authenticate based on certain group memberships?</li>
+  <li><strong>Force 2FA by admin configuration</strong> – implement time window for activating 2FA after a global option is enabled?</li>
+  <li><strong>Login by link</strong> – should the option to send a one-time login link be email be supported?</li>
+  <li><strong>XSS protection</strong> – make sure no XSS vulnerabilities exist especially on the login page (but not only, as XSS can steal cookies)</li>
+  <li><strong>Dedicated authentication log</strong> – keep a history of all logins, with time, IP, user agent</li>
+  <li><strong>Force logout</strong> – is the ability to logout a logged-in device needed, how to implement it, e.g. with stateless tokens it’s not trivial.</li>
+  <li><strong>Keeping a mobile device logged in</strong> – what should be stored client-side? (certainly not the password)</li>
+  <li><strong>Working behind proxy</strong> – if the client IP matters (it does), make sure the X-Forwarded-For header is parsed</li>
+  <li><strong>Capture login timezone</strong> for user and store it in the session to adjust times in the UI?</li>
+  <li><strong>TLS Mutual authentication</strong> – if we need to support hardware token authentication with private key, we should enable TLS mutual. What should be in the truststore, does the web server support per-page mutual TLS or should we use a subdomain, if there’s a load balancer / reverse proxy, does it support it and how to forward certificate details?</li>
+  <li><strong>Require account activation</strong> or let the user login immediately after registration? Require account approval by back-office staff?</li>
+  <li><strong>Initial password setting for accounts created by admins</strong> – generate initial password and force changing it on first login? - Don’t generate password and start from a password reset flow?</li>
+  <li><strong>Login anomalies</strong> – how to detect them and should you inform the user? Should you rely on 3rd party tools (e.g. a SIEM), or have such functionality built-in?</li>
+</ul>
+
+<p>So, it is necessary for developers and security professionals should to know how to implement this checklist in real world  if we are talking about secure and robust authentication system.</p>
+
+
+    </section>
+
+      
+<footer id="footer">
+    <hr>
+    <i>Site proudly generated by
+    <a href="https://jekyllrb.com/">Jekyll</a> & hosted on <a href="https://pages.github.com/">Github</a></i> | <a href="/feed.xml">RSS</a> | <a href="https://html5.validator.nu/?doc=https://smodnix.github.io/"><b>This page is valid HTML</b></a>
+</footer>
+      </div>
+  </div>
+  
+  <!-- Colour theme switcher -->
+  <script>
+    const themeSwitch = document.querySelector('#lightswitch');
+    themeSwitch.checked = localStorage.getItem('switchedTheme') === 'true';
+
+    themeSwitch.addEventListener('change', function (e) {
+        if(e.currentTarget.checked === true) {
+            // Add item to localstorage
+            localStorage.setItem('switchedTheme', 'true');
+        } else {
+            // Remove item if theme is switched back to normal
+            localStorage.removeItem('switchedTheme');
+        }
+    });
+  </script>
+  <!-- Privacy-aware analytics by https://www.goatcounter.com/ -->
+  <script data-goatcounter="https://smod.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  </body>
+</html>
